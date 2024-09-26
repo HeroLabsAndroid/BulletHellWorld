@@ -9,29 +9,44 @@ import android.view.Display;
 import android.view.View;
 import android.view.WindowManager;
 
+import android.widget.Button;
+import android.widget.TextView;
+
 import androidx.activity.EdgeToEdge;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.graphics.Insets;
 import androidx.core.view.ViewCompat;
 import androidx.core.view.WindowInsetsCompat;
+import androidx.fragment.app.FragmentManager;
 
+import com.example.bullethellworld.DialogDismissedListener;
+import com.example.bullethellworld.GameOverDialog;
 import com.example.bullethellworld.R;
 import com.example.bullethellworld.views.JoyconView;
-import com.example.bullethellworld.views.PlayerView;
+import com.example.bullethellworld.views.PlayingFieldView;
 
+import java.util.Locale;
+import java.util.Random;
 import java.util.Timer;
 import java.util.TimerTask;
 
-public class MainActivity extends AppCompatActivity implements JoyconView.JoyconListener{
+public class MainActivity extends AppCompatActivity implements JoyconView.JoyconListener, PlayingFieldView.GameOverListener, DialogDismissedListener {
 
     JoyconView joyconView;
-    PlayerView playerView;
+    PlayingFieldView playingFieldView;
 
+    Button btnDebug;
+    TextView tvScore;
 
     int widthMeasureSpec, heightMeasureSpec;
 
+// GAME PARAMS //
     float[] playerPos = new float[2];
+    public static boolean paused = false;
+    public static int score = 0;
+//------------------------------------//
 
+// Clock //
     final Handler handler = new Handler();
     Timer timer = new Timer(false);
     TimerTask timerTask = new TimerTask() {
@@ -41,12 +56,14 @@ public class MainActivity extends AppCompatActivity implements JoyconView.Joycon
                 @Override
                 public void run() {
                     update_ui();
+                    score += playingFieldView.bulletCount();
+                    if(new Random().nextFloat()<(0.1/(float)playingFieldView.bulletCount())) playingFieldView.spawnBullet();
                 }
             });
         }
     };
 
-
+//------------------------------------//
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -60,7 +77,18 @@ public class MainActivity extends AppCompatActivity implements JoyconView.Joycon
         });
 
         joyconView = findViewById(R.id.JV_joycon);
-        playerView = findViewById(R.id.PV_player);
+        playingFieldView = findViewById(R.id.PV_player);
+        btnDebug = findViewById(R.id.btnDebug);
+        tvScore = findViewById(R.id.TV_score);
+
+        btnDebug.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                playingFieldView.spawnBullet();
+            }
+        });
+
+        playingFieldView.setGameOverListener(this);
 
 
         timer.scheduleAtFixedRate(timerTask, 20, 20); // 1000 = 1 second.
@@ -76,26 +104,41 @@ public class MainActivity extends AppCompatActivity implements JoyconView.Joycon
 
         int deviceWidth, deviceHeight;
 
-        if(android.os.Build.VERSION.SDK_INT >= Build.VERSION_CODES.HONEYCOMB_MR2){
-            Point size = new Point();
-            display.getSize(size);
-            deviceWidth = size.x;
-            deviceHeight = size.y;
-        } else {
-            deviceWidth = display.getWidth();
-            deviceHeight = display.getHeight();
-        }
+        Point size = new Point();
+        display.getSize(size);
+        deviceWidth = size.x;
+        deviceHeight = size.y;
 
         widthMeasureSpec = View.MeasureSpec.makeMeasureSpec(deviceWidth, View.MeasureSpec.EXACTLY);
         heightMeasureSpec = View.MeasureSpec.makeMeasureSpec(deviceHeight, View.MeasureSpec.EXACTLY);
     }
 
     public void update_ui() {
-        playerView.move(playerPos[0], playerPos[1]);
+        if(!paused) {
+            playingFieldView.movePlayer(playerPos[0], playerPos[1]);
+            playingFieldView.moveBullets();
+            playingFieldView.invalidate();
+            tvScore.setText(String.format(Locale.getDefault(),"%d",score/100));
+        }
     }
 
     @Override
     public void onJoyconMoved(float[] coord) {
         playerPos = coord;
+    }
+
+    @Override
+    public void gameOver() {
+        paused = true;
+        GameOverDialog goDial = new GameOverDialog(this, score);
+        FragmentManager fragMan = getSupportFragmentManager();
+        goDial.show(fragMan, "gameover");
+    }
+
+    @Override
+    public void onDialogDismissed() {
+        score = 0;
+        playingFieldView.reset();
+        paused = false;
     }
 }
