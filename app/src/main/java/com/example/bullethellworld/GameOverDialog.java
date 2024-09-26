@@ -31,7 +31,7 @@ public class GameOverDialog extends DialogFragment {
     public GameOverDialog(DialogDismissedListener dismissListen, int score, Context con) {
         this.dismissListen = dismissListen;
         this.score = score;
-
+        this.con=con;
         SharedPreferences sharedPref = con.getSharedPreferences("BLLTHLLWRLD", Context.MODE_PRIVATE);
         hiscore = sharedPref.getInt("HISCORE", 0);
 
@@ -54,12 +54,9 @@ public class GameOverDialog extends DialogFragment {
         tvGameOverTitle = layout.findViewById(R.id.TV_gameover_title);
         tvScore = layout.findViewById(R.id.TV_gameover_score);
 
-        btnOK.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                dismissListen.onDialogDismissed();
-                dismiss();
-            }
+        btnOK.setOnClickListener(v -> {
+            dismissListen.onDialogDismissed();
+            dismiss();
         });
 
         tvScore.setText(String.format(Locale.getDefault(), "%s: %d", getResources().getString(score < hiscore ? R.string.MSG_score : R.string.MSG_hiscore), score/100));

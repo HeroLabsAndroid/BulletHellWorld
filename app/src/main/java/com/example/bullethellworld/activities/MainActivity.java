@@ -2,13 +2,11 @@ package com.example.bullethellworld.activities;
 
 import android.content.Context;
 import android.graphics.Point;
-import android.os.Build;
 import android.os.Bundle;
 import android.os.Handler;
 import android.view.Display;
 import android.view.View;
 import android.view.WindowManager;
-
 import android.widget.Button;
 import android.widget.TextView;
 
@@ -52,14 +50,12 @@ public class MainActivity extends AppCompatActivity implements JoyconView.Joycon
     TimerTask timerTask = new TimerTask() {
         @Override
         public void run() {
-            handler.post(new Runnable() {
-                @Override
-                public void run() {
+            handler.post(() -> {
                     update_ui();
                     score += playingFieldView.bulletCount();
                     if(new Random().nextFloat()<(0.1/(float)(playingFieldView.bulletCount()/2))) playingFieldView.spawnBullet();
                 }
-            });
+            );
         }
     };
 
@@ -81,12 +77,7 @@ public class MainActivity extends AppCompatActivity implements JoyconView.Joycon
         btnDebug = findViewById(R.id.btnDebug);
         tvScore = findViewById(R.id.TV_score);
 
-        btnDebug.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                playingFieldView.spawnBullet();
-            }
-        });
+        btnDebug.setOnClickListener(v -> playingFieldView.spawnBullet());
 
         playingFieldView.setGameOverListener(this);
 

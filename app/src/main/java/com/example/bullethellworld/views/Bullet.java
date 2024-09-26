@@ -6,7 +6,6 @@ import android.graphics.Canvas;
 import android.graphics.Color;
 import android.graphics.Paint;
 
-import com.example.bullethellworld.GameOverDialog;
 
 public class Bullet implements DrawableEntity {
 
@@ -17,7 +16,7 @@ public class Bullet implements DrawableEntity {
 
     public float bX, bY;
     public final int W=BLT_SIZE, H=BLT_SIZE;
-    private float[] vect=new float[2];
+    private float[] vect;
 
     Paint paint;
     Paint lightpaint;
@@ -27,7 +26,7 @@ public class Bullet implements DrawableEntity {
 
     BulletEventListener bulletListen;
 
-    private int id;
+    private int id = 0;
 
 
     private int age = 0;
