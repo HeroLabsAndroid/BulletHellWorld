@@ -57,7 +57,7 @@ public class MainActivity extends AppCompatActivity implements JoyconView.Joycon
                 public void run() {
                     update_ui();
                     score += playingFieldView.bulletCount();
-                    if(new Random().nextFloat()<(0.1/(float)playingFieldView.bulletCount())) playingFieldView.spawnBullet();
+                    if(new Random().nextFloat()<(0.1/(float)(playingFieldView.bulletCount()/2))) playingFieldView.spawnBullet();
                 }
             });
         }
@@ -91,7 +91,7 @@ public class MainActivity extends AppCompatActivity implements JoyconView.Joycon
         playingFieldView.setGameOverListener(this);
 
 
-        timer.scheduleAtFixedRate(timerTask, 20, 20); // 1000 = 1 second.
+        timer.scheduleAtFixedRate(timerTask, 10, 10); // 1000 = 1 second.
     }
 
     @Override
@@ -130,7 +130,7 @@ public class MainActivity extends AppCompatActivity implements JoyconView.Joycon
     @Override
     public void gameOver() {
         paused = true;
-        GameOverDialog goDial = new GameOverDialog(this, score);
+        GameOverDialog goDial = new GameOverDialog(this, score, this);
         FragmentManager fragMan = getSupportFragmentManager();
         goDial.show(fragMan, "gameover");
     }

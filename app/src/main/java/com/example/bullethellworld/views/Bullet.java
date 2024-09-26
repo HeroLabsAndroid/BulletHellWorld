@@ -20,6 +20,7 @@ public class Bullet implements DrawableEntity {
     private float[] vect=new float[2];
 
     Paint paint;
+    Paint lightpaint;
 
     Collidable player;
     Frame field;
@@ -64,17 +65,26 @@ public class Bullet implements DrawableEntity {
                 )
         );
         paint.setAlpha(255);
+
+
+        Color clr = Color.valueOf(paint.getColor());
+
+        //lightpaint.setColor(Color.argb(255, (int) (clr.red()*1.2), (int) (clr.green()*1.2), (int) (clr.blue()*1.2)));
     }
 
     @Override
     public void draw(Canvas c) {
         c.drawCircle(bX,bY,W,paint);
+        c.drawCircle(bX,bY, (float) (3 * W) /4,lightpaint);
     }
 
     @Override
     public Paint setPaint() {
+        lightpaint = new Paint();
         Paint p = new Paint();
         p.setColor(Color.argb(255, 84, 224, 224));
+        Color clr = Color.valueOf(p.getColor());
+        lightpaint.setColor(0xFF161B29);
         return p;
     }
 

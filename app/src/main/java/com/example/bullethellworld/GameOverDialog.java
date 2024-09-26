@@ -2,6 +2,7 @@ package com.example.bullethellworld;
 
 import android.app.Dialog;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.view.LayoutInflater;
@@ -25,11 +26,13 @@ public class GameOverDialog extends DialogFragment {
     TextView tvGameOverTitle, tvScore;
     Button btnOK;
 
-    public GameOverDialog(DialogDismissedListener dismissListen, int score) {
+    Context con;
+
+    public GameOverDialog(DialogDismissedListener dismissListen, int score, Context con) {
         this.dismissListen = dismissListen;
         this.score = score;
 
-        SharedPreferences sharedPref = requireActivity().getSharedPreferences("BLLTHLLWRLD", Context.MODE_PRIVATE);
+        SharedPreferences sharedPref = con.getSharedPreferences("BLLTHLLWRLD", Context.MODE_PRIVATE);
         hiscore = sharedPref.getInt("HISCORE", 0);
 
         if(hiscore < score) {
@@ -59,10 +62,16 @@ public class GameOverDialog extends DialogFragment {
             }
         });
 
-        tvScore.setText(String.format(Locale.getDefault(), "%s: %d", getResources().getString(score > hiscore ? R.string.MSG_score : R.string.MSG_hiscore), score/100));
+        tvScore.setText(String.format(Locale.getDefault(), "%s: %d", getResources().getString(score < hiscore ? R.string.MSG_score : R.string.MSG_hiscore), score/100));
         tvGameOverTitle.setText(getResources().getString(R.string.MSG_gameover));
 
         builder.setView(layout);
         return builder.create();
+    }
+
+    @Override
+    public void onDismiss(@NonNull DialogInterface dialog) {
+        dismissListen.onDialogDismissed();
+        super.onDismiss(dialog);
     }
 }

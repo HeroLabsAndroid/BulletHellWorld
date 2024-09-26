@@ -2,7 +2,7 @@ package com.example.bullethellworld.views;
 
 public class Const {
     static final int PL_SIZE = 32;
-    static final int BLT_SIZE = 24;
+    static final int BLT_SIZE = 16;
     static final int BLT_MAXAGE = 8;
     static final float BLT_SPEED_BASE = 4f;
 
