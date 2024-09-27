@@ -30,7 +30,9 @@ import java.util.TimerTask;
 
 public class MainActivity extends AppCompatActivity implements JoyconView.JoyconListener, PlayingFieldView.GameOverListener, DialogDismissedListener {
 
-    JoyconView joyconView;
+
+
+    JoyconView joyconViewCtrl, joyconViewBullet;
     PlayingFieldView playingFieldView;
 
     Button btnDebug;
@@ -53,7 +55,8 @@ public class MainActivity extends AppCompatActivity implements JoyconView.Joycon
             handler.post(() -> {
                     update_ui();
                     score += playingFieldView.bulletCount();
-                    if(new Random().nextFloat()<(0.1/(float)(playingFieldView.bulletCount()/2))) playingFieldView.spawnBullet();
+                    playingFieldView.getPlayer().cooldown--;
+                    if(new Random().nextFloat()<(0.075/(float)(playingFieldView.bulletCount()/2))) playingFieldView.spawnBullet();
                 }
             );
         }
@@ -72,10 +75,14 @@ public class MainActivity extends AppCompatActivity implements JoyconView.Joycon
             return insets;
         });
 
-        joyconView = findViewById(R.id.JV_joycon);
+        joyconViewCtrl = findViewById(R.id.JV_joycon);
+        joyconViewBullet = findViewById(R.id.JV_bullet);
         playingFieldView = findViewById(R.id.PV_player);
         btnDebug = findViewById(R.id.btnDebug);
         tvScore = findViewById(R.id.TV_score);
+
+        joyconViewCtrl.setIsCtrl(true);
+        joyconViewBullet.setIsCtrl(false);
 
         btnDebug.setOnClickListener(v -> playingFieldView.spawnBullet());
 
@@ -107,15 +114,21 @@ public class MainActivity extends AppCompatActivity implements JoyconView.Joycon
     public void update_ui() {
         if(!paused) {
             playingFieldView.movePlayer(playerPos[0], playerPos[1]);
-            playingFieldView.moveBullets();
+            playingFieldView.moveBullets(1+(score/100000f));
+
+            playingFieldView.check_blt_plblt_coll();
             playingFieldView.invalidate();
             tvScore.setText(String.format(Locale.getDefault(),"%d",score/100));
         }
     }
 
     @Override
-    public void onJoyconMoved(float[] coord) {
-        playerPos = coord;
+    public void onJoyconMoved(float[] coord, boolean ctrl) {
+        if(ctrl)
+            playerPos = coord;
+        else {
+            playingFieldView.getPlayer().fire(coord);
+        }
     }
 
     @Override

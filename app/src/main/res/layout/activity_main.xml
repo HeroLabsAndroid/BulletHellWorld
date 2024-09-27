@@ -8,27 +8,16 @@
     android:background="#161B29"
     tools:context=".activities.MainActivity">
 
-    <view
-        android:id="@+id/PV_player"
-        class="com.example.bullethellworld.views.PlayingFieldView"
-        android:layout_width="0dp"
-        android:layout_height="0dp"
-        app:layout_constraintBottom_toTopOf="@+id/CSTRLYT_ctrl"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent" />
-
     <androidx.constraintlayout.widget.ConstraintLayout
-        android:id="@+id/CSTRLYT_ctrl"
-        android:layout_width="match_parent"
+        android:id="@+id/CSTRLYT_bulletjoycon"
+        android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent">
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent">
 
-        <view
-            android:id="@+id/JV_joycon"
-            class="com.example.bullethellworld.views.JoyconView"
+        <com.example.bullethellworld.views.JoyconView
+            android:id="@+id/JV_bullet"
             android:layout_width="128dp"
             android:layout_height="128dp"
             android:layout_marginTop="16dp"
@@ -37,26 +26,56 @@
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent" />
+    </androidx.constraintlayout.widget.ConstraintLayout>
+
+    <view
+        android:id="@+id/PV_player"
+        class="com.example.bullethellworld.views.PlayingFieldView"
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toStartOf="@+id/CSTRLYT_ctrl"
+        app:layout_constraintStart_toEndOf="@+id/CSTRLYT_bulletjoycon"
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:id="@+id/CSTRLYT_ctrl"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toTopOf="parent">
+
+        <view
+            android:id="@+id/JV_joycon"
+            class="com.example.bullethellworld.views.JoyconView"
+            android:layout_width="128dp"
+            android:layout_height="128dp"
+            android:layout_marginBottom="8dp"
+            app:layout_constraintBottom_toTopOf="@+id/btnDebug"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent" />
 
         <Button
             android:id="@+id/btnDebug"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="pewpew"
+            android:visibility="invisible"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toEndOf="@+id/JV_joycon"
-            app:layout_constraintTop_toTopOf="parent" />
+            app:layout_constraintStart_toStartOf="parent" />
 
         <TextView
             android:id="@+id/TV_score"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:layout_marginBottom="4dp"
             android:fontFamily="@font/finger_paint"
             android:text="TextView"
             android:textColor="@color/TXT_dark"
-            app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintEnd_toStartOf="@+id/JV_joycon"
+            app:layout_constraintBottom_toTopOf="@+id/JV_joycon"
+            app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent" />
 

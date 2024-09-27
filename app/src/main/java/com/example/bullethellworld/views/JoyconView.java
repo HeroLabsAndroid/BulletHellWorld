@@ -24,10 +24,12 @@ public class JoyconView extends View {
 
     float maxdist;
     boolean firstdraw = true;
+    boolean ctrl = true;
 
-    public interface JoyconListener {
-        public void onJoyconMoved(float[] coord);
+    public abstract interface JoyconListener {
+        public void onJoyconMoved(float[] coord, boolean ctrl);
     }
+
 
     public float[] get_coord() {
         return new float[] {px, py};
@@ -48,6 +50,17 @@ public class JoyconView extends View {
         return new double[] {coords[0]*scale, coords[1]*scale};
     }
 
+    public void setIsCtrl(boolean isCtrl) {
+        ctrl = isCtrl;
+        if(isCtrl) {
+            p.setColor(Color.argb(255, 110,110,255));
+            pDark.setColor(Color.argb(255, 22,22,88));
+        } else {
+            p.setColor(Color.argb(255, 219,92,130));
+            pDark.setColor(Color.argb(255, 126,92,130));
+        }
+    }
+
     public JoyconView(Context context, @Nullable AttributeSet attrs) {
         super(context, attrs);
         p.setColor(Color.argb(255, 110,110,255));
@@ -63,6 +76,7 @@ public class JoyconView extends View {
         setMeasuredDimension(MeasureSpec.getSize(widthMeasureSpec), MeasureSpec.getSize(heightMeasureSpec));
 
     }
+
 
     @Override
     protected void onDraw(@NonNull Canvas canvas) {
@@ -93,19 +107,19 @@ public class JoyconView extends View {
             py = event.getY()-cY;
             double dist = dist_to_ctr(new double[] {px, py});
             if(dist >= maxdist) {
-                Log.d("JOYCON_TOUCH", String.format(Locale.getDefault(), "dist=%f, max=%f: scaling coords", dist, maxdist));
-                Log.d("JOYCON_TOUCH", String.format(Locale.getDefault(), "  unscaled: x=%f, y=%f", px, py));
+               // Log.d("JOYCON_TOUCH", String.format(Locale.getDefault(), "dist=%f, max=%f: scaling coords", dist, maxdist));
+               // Log.d("JOYCON_TOUCH", String.format(Locale.getDefault(), "  unscaled: x=%f, y=%f", px, py));
                 double[] scaled_coords = scale_coords(new double[] {px, py}, dist);
                 px = (float) scaled_coords[0];
                 py = (float) scaled_coords[1];
-                Log.d("JOYCON_TOUCH", String.format(Locale.getDefault(), "  scaled: x=%f, y=%f", px, py));
-            } else Log.d("JOYCON_TOUCH", String.format(Locale.getDefault(), "dist=%f, max=%f: NOT scaling coords", dist, maxdist));
-            jListen.onJoyconMoved(new float[] {px/maxdist*8, py/maxdist*8});
+               // Log.d("JOYCON_TOUCH", String.format(Locale.getDefault(), "  scaled: x=%f, y=%f", px, py));
+            }// else Log.d("JOYCON_TOUCH", String.format(Locale.getDefault(), "dist=%f, max=%f: NOT scaling coords", dist, maxdist));
+            jListen.onJoyconMoved(new float[] {px/maxdist*8, py/maxdist*8}, ctrl);
             invalidate();
         } else if(event.getAction()==MotionEvent.ACTION_UP) {
             px = 0;
             py = 0;
-            jListen.onJoyconMoved(new float[] {px, py});
+            if(ctrl) jListen.onJoyconMoved(new float[] {px, py}, true);
             invalidate();
         }
 

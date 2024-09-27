@@ -50,6 +50,8 @@ public class PlayingFieldView extends View implements Bullet.BulletEventListener
 
     }
 
+    public Player getPlayer() {return player;}
+
     public void reset() {
         bullets = new ArrayList<>();
         setFieldAndPlayer(field.width(), field.height());
@@ -98,11 +100,12 @@ public class PlayingFieldView extends View implements Bullet.BulletEventListener
 
     public void movePlayer(float x, float y) {
         player.move(x, y);
+        if(player.cooldown > 0) player.cooldown --;
     }
 
-    public void moveBullets() {
+    public void moveBullets(float scale) {
         for(Bullet bul: bullets) {
-            bul.move();
+            bul.move(scale);
         }
     }
 
@@ -113,6 +116,23 @@ public class PlayingFieldView extends View implements Bullet.BulletEventListener
         if(idx < 0) Log.e("onBulletAged", "ERROR: BULLET ID NOT FOUND");
         else bullets.remove(idx);
         MainActivity.paused = false;
+    }
+
+    public void check_blt_plblt_coll() {
+        for(PlayerBullet pb: player.getBullets()) {
+            for(Bullet bl: bullets) {
+                if(pb.hit_bullet(bl)) {
+                    pb.dead = true;
+                    bl.remove();
+                }
+            }
+        }
+        /*for(int i=player.getBullets().size()-1; i>=0; i--) {
+            if(player.getBullets().get(i).dead) player.getBullets().remove(i);
+        }*/
+        for(int i=bullets.size()-1; i>=0; i--) {
+            if(bullets.get(i).getAge()>=Const.BLT_MAXAGE) bullets.remove(i);
+        }
     }
 
     @Override

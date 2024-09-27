@@ -53,6 +53,10 @@ public class Bullet implements DrawableEntity {
         return (float)age/(float)Const.BLT_MAXAGE;
     }
 
+    public void remove() {
+        age = Const.BLT_MAXAGE+1;
+    }
+
     private void set_bullet_color() {
         float rage = relative_age();
 
@@ -87,12 +91,12 @@ public class Bullet implements DrawableEntity {
         return p;
     }
 
-    public void move() {
-        if(player.collides(bX+vect[0]-W/2f, bY+vect[1]-H/2f, W, H)) {
+    public void move(float scale) {
+        if(player.collides(bX+vect[0]*scale-W/2f, bY+vect[1]*scale-H/2f, W, H)) {
             bulletListen.onBulletHit(id);
         }
 
-        switch(field.collides(bX+vect[0]-W/2f, bY+vect[1]-H/2f, W, H)) {
+        switch(field.collides(bX+vect[0]*scale-W/2f, bY+vect[1]*scale-H/2f, W, H)) {
             case NONE:
                 break;
             case TOP:
@@ -113,7 +117,7 @@ public class Bullet implements DrawableEntity {
             bulletListen.onBulletAged(id);
         }
 
-        bX = bX + vect[0];
-        bY = bY + vect[1];
+        bX = bX + vect[0]*scale;
+        bY = bY + vect[1]*scale;
     }
 }
