@@ -37,7 +37,7 @@ public class Player implements DrawableEntity, Collidable {
 
     public void fire(float[] vect) {
         if(cooldown <= 0) {
-            PlayerBullet pb = new PlayerBullet(new float[] {pX+W/2f, pY+H/2f}, vect, field);
+            PlayerBullet pb = new PlayerBullet(new float[] {pX+W/2f, pY+H/2f }, vect, field);
             pb.setPaint();
             bullets.add(pb);
             cooldown = Const.PL_FIRERATE;
@@ -55,13 +55,13 @@ public class Player implements DrawableEntity, Collidable {
     }
 
     public void move(float x, float y) {
-        Log.d("PLAYER", String.format(Locale.getDefault(), "shift is (%.1f, %.1f)", x, y));
-        Log.d("PLAYER", String.format(Locale.getDefault(), "fieldsize is (%d, %d)", field.width(), field.height()));
-        Log.d("PLAYER", String.format(Locale.getDefault(), "pos+shift is (%.1f, %.1f)", pX+x, pY+y));
-        pX = min(field.width()-(W/2f), max(0, pX+x));
-        pY = min(field.height()-(H/2f), max(0, pY+y));
+       // Log.d("PLAYER", String.format(Locale.getDefault(), "shift is (%.1f, %.1f)", x, y));
+       // Log.d("PLAYER", String.format(Locale.getDefault(), "fieldsize is (%d, %d)", field.width(), field.height()));
+      //  Log.d("PLAYER", String.format(Locale.getDefault(), "pos+shift is (%.1f, %.1f)", pX+x, pY+y));
+        pX = min(field.width()-W, max(0, pX+x));
+        pY = min(field.height()-H, max(0, pY+y));
         if(!bullets.isEmpty()) moveBullets();
-        Log.d("PLAYER", String.format(Locale.getDefault(), "moved player to (%.1f, %.1f)", pX, pY));
+     //   Log.d("PLAYER", String.format(Locale.getDefault(), "moved player to (%.1f, %.1f)", pX, pY));
     }
 
     @Override
@@ -82,7 +82,7 @@ public class Player implements DrawableEntity, Collidable {
     }
 
     @Override
-    public boolean collides(float x0, float y0, float w, float h) {
+    public boolean collides(float x0, float y0, int w, int h) {
         return (pX+W >= x0 && pX <= x0+w && pY+H >= y0 && pY <= y0+h);
     }
 }

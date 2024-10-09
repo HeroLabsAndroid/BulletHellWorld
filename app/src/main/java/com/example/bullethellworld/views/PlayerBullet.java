@@ -13,11 +13,18 @@ public class PlayerBullet implements DrawableEntity, Collidable {
 
     Frame field;
 
+    boolean is_from_player;
+
 
     public PlayerBullet(float[] pos, float[] vect, Frame field) {
+        this(pos, vect, field, true);
+    }
+
+    public PlayerBullet(float[] pos, float[] vect, Frame field, boolean is_from_player) {
         this.pos = pos;
         this.vect = Util.normalize(vect);
         this.field = field;
+        this.is_from_player = is_from_player;
     }
 
     public void move() {
@@ -36,6 +43,18 @@ public class PlayerBullet implements DrawableEntity, Collidable {
                 && pos[1]<(b.bY+b.H));
         if(hit) {
             Log.d("HIT", "Playerbullet hit bullet");
+        }
+
+        return hit;
+    }
+
+    public boolean hit_player(Player plyr) {
+        boolean hit = (pos[0]>(plyr.pX)
+                && pos[0]<(plyr.pX+plyr.W)
+                && pos[1]>(plyr.pY)
+                && pos[1]<(plyr.pY+plyr.H));
+        if(hit) {
+            Log.d("HIT", "Playerbullet hit player");
         }
 
         return hit;
@@ -60,7 +79,7 @@ public class PlayerBullet implements DrawableEntity, Collidable {
     }
 
     @Override
-    public boolean collides(float x0, float y0, float w, float h) {
+    public boolean collides(float x0, float y0, int w, int h) {
         boolean out = (pos[0]>x0 && pos[0] <x0+h && pos[1]>y0 && pos[1]<y0+h);
         if(out) dead = true;
 

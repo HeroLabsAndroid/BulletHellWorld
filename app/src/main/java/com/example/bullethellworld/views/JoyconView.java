@@ -86,13 +86,13 @@ public class JoyconView extends View {
             py = 0;
             cX = getWidth()/2f;
             cY = getHeight()/2f;
-            maxdist = getWidth()/3f;
+            maxdist = 2*getWidth()/5f;
         }
         //canvas.drawRect(getLeft(), getTop(), getRight(), getBottom(), pDark );
         //canvas.drawCircle(getLeft()+getWidth()/2.0f, getTop()+getHeight()/2.0f, getWidth()/2.0f, p);
         p.setStyle(Paint.Style.STROKE);
         p.setStrokeWidth(4);
-        canvas.drawCircle(cX, cY, getWidth()/3f, p);
+        canvas.drawCircle(cX, cY, maxdist, p);
 
         p.setStyle(Paint.Style.FILL);
         canvas.drawCircle(cX+px, cY+py, getWidth()/8.0f, p);

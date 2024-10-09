@@ -40,6 +40,8 @@ public class MainActivity extends AppCompatActivity implements JoyconView.Joycon
 
     int widthMeasureSpec, heightMeasureSpec;
 
+    FragmentManager fragMan = getSupportFragmentManager();
+
 // GAME PARAMS //
     float[] playerPos = new float[2];
     public static boolean paused = false;
@@ -56,7 +58,7 @@ public class MainActivity extends AppCompatActivity implements JoyconView.Joycon
                     update_ui();
                     score += playingFieldView.bulletCount();
                     playingFieldView.getPlayer().cooldown--;
-                    if(new Random().nextFloat()<(0.075/(float)(playingFieldView.bulletCount()/2))) playingFieldView.spawnBullet();
+                    if(new Random().nextFloat()<(0.025/(float)(playingFieldView.bulletCount()/2))) playingFieldView.spawnBullet();
                 }
             );
         }
@@ -135,7 +137,7 @@ public class MainActivity extends AppCompatActivity implements JoyconView.Joycon
     public void gameOver() {
         paused = true;
         GameOverDialog goDial = new GameOverDialog(this, score, this);
-        FragmentManager fragMan = getSupportFragmentManager();
+
         goDial.show(fragMan, "gameover");
     }
 

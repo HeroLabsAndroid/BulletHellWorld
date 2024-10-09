@@ -75,14 +75,14 @@ public class PlayingFieldView extends View implements Bullet.BulletEventListener
         switch (side) {
             case TOP:
                 pos[0] = rdm.nextInt(field.width());
-                pos[1] = Const.BLT_SIZE/2f;
+                pos[1] = Const.BLT_SIZE;
                 v[0] = (rdm.nextBoolean() ? -1 : 1) * rdm.nextFloat();
                 v[1] = rdm.nextFloat();
                 v = Util.normalize(v, Const.BLT_SPEED_BASE);
 
         }
 
-        bullets.add(new Bullet(pos[0], pos[1], v, player, field, this, bullet_ctr));
+        bullets.add(new Bullet(pos[0], pos[1], v, player, field, this, bullet_ctr, 666+rdm.nextInt(2000)));
         bullet_ctr++;
 
     }
@@ -153,6 +153,8 @@ public class PlayingFieldView extends View implements Bullet.BulletEventListener
     @Override
     protected void onDraw(@NonNull Canvas canvas) {
         super.onDraw(canvas);
+
+        field.draw(canvas);
         player.draw(canvas);
         for(Bullet bul: bullets) {
             bul.draw(canvas);
