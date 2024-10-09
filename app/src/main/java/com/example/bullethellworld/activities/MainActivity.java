@@ -35,12 +35,12 @@ public class MainActivity extends AppCompatActivity implements JoyconView.Joycon
     JoyconView joyconViewCtrl, joyconViewBullet;
     PlayingFieldView playingFieldView;
 
-    Button btnDebug;
     TextView tvScore;
 
     int widthMeasureSpec, heightMeasureSpec;
 
     FragmentManager fragMan = getSupportFragmentManager();
+    private static MainActivity activity_ref;
 
 // GAME PARAMS //
     float[] playerPos = new float[2];
@@ -56,9 +56,8 @@ public class MainActivity extends AppCompatActivity implements JoyconView.Joycon
         public void run() {
             handler.post(() -> {
                     update_ui();
-                    score += playingFieldView.bulletCount();
+                    score += playingFieldView.getEnemy().bulletCount();
                     playingFieldView.getPlayer().cooldown--;
-                    if(new Random().nextFloat()<(0.025/(float)(playingFieldView.bulletCount()/2))) playingFieldView.spawnBullet();
                 }
             );
         }
@@ -77,16 +76,15 @@ public class MainActivity extends AppCompatActivity implements JoyconView.Joycon
             return insets;
         });
 
+        activity_ref = this;
         joyconViewCtrl = findViewById(R.id.JV_joycon);
         joyconViewBullet = findViewById(R.id.JV_bullet);
         playingFieldView = findViewById(R.id.PV_player);
-        btnDebug = findViewById(R.id.btnDebug);
         tvScore = findViewById(R.id.TV_score);
 
         joyconViewCtrl.setIsCtrl(true);
         joyconViewBullet.setIsCtrl(false);
 
-        btnDebug.setOnClickListener(v -> playingFieldView.spawnBullet());
 
         playingFieldView.setGameOverListener(this);
 
@@ -116,7 +114,8 @@ public class MainActivity extends AppCompatActivity implements JoyconView.Joycon
     public void update_ui() {
         if(!paused) {
             playingFieldView.movePlayer(playerPos[0], playerPos[1]);
-            playingFieldView.moveBullets(1+(score/100000f));
+            playingFieldView.moveEnemy(1+score/100000f);
+
 
             playingFieldView.check_blt_plblt_coll();
             playingFieldView.invalidate();
@@ -133,12 +132,16 @@ public class MainActivity extends AppCompatActivity implements JoyconView.Joycon
         }
     }
 
-    @Override
-    public void gameOver() {
+    private void show_gameover_dialog() {
         paused = true;
         GameOverDialog goDial = new GameOverDialog(this, score, this);
 
-        goDial.show(fragMan, "gameover");
+        goDial.show(activity_ref.getSupportFragmentManager(), "gameover");
+    }
+
+    @Override
+    public void gameOver() {
+        show_gameover_dialog();
     }
 
     @Override

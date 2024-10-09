@@ -4,6 +4,8 @@ import android.graphics.Canvas;
 import android.graphics.Color;
 import android.graphics.Paint;
 
+import com.example.bullethellworld.Side;
+
 public class Field implements Frame, DrawableEntity{
     private int wField, hField;
     Paint p;
@@ -33,7 +35,7 @@ public class Field implements Frame, DrawableEntity{
 
     @Override
     public void draw(Canvas c) {
-        c.drawRect(4,4,wField-4,hField-4,p);
+        c.drawRect(0,0,wField,hField,p);
     }
 
     @Override

@@ -1,15 +1,20 @@
 package com.example.bullethellworld.views;
 
-import static com.example.bullethellworld.views.Const.BLT_SIZE;
-import static com.example.bullethellworld.views.Const.CLR_BLT_NEW;
+import static com.example.bullethellworld.Const.BLT_SIZE;
+import static com.example.bullethellworld.Const.CLR_BLT_NEW;
 
 import android.graphics.Canvas;
 import android.graphics.Color;
 import android.graphics.Paint;
 import android.util.Log;
 
+import com.example.bullethellworld.Const;
+import com.example.bullethellworld.Side;
+import com.example.bullethellworld.Util;
+
 import java.util.ArrayList;
 import java.util.Locale;
+import java.util.Random;
 
 
 public class Bullet implements DrawableEntity {
@@ -64,7 +69,7 @@ public class Bullet implements DrawableEntity {
     }
 
     private float relative_age() {
-        return (float)age/(float)Const.BLT_MAXAGE;
+        return (float)age/(float) Const.BLT_MAXAGE;
     }
 
     public void remove() {
@@ -90,13 +95,12 @@ public class Bullet implements DrawableEntity {
     }
 
     public void fire(float[] vect) {
-        if(cooldown <= 0) {
-            PlayerBullet pb = new PlayerBullet(new float[] {bX+W/2f, bY+H/2f }, vect, field);
+            PlayerBullet pb = new PlayerBullet(new float[] {bX+W/2f, bY+H/2f }, vect, field, false);
             pb.setPaint();
             bullets.add(pb);
             cooldown = cooldown_Time;
             Log.d("bullet.fire", "pewpew");
-        }
+
     }
 
     public void moveBullets() {
@@ -105,6 +109,7 @@ public class Bullet implements DrawableEntity {
         }
         for(PlayerBullet pb: bullets) {
             pb.move();
+            if(player.collides(pb.pos[0], pb.pos[1], 2, 2)) bulletListen.onBulletHit(0);
         }
     }
 
@@ -112,6 +117,9 @@ public class Bullet implements DrawableEntity {
     public void draw(Canvas c) {
         c.drawCircle(bX,bY,W,paint);
         c.drawCircle(bX,bY, (float) (3 * W) /4,lightpaint);
+        for(PlayerBullet pb: bullets) {
+            pb.draw(c);
+        }
     }
 
     @Override
@@ -126,11 +134,17 @@ public class Bullet implements DrawableEntity {
 
     public void move(float scale) {
         if(cooldown <= 0) {
-            fire(new float[] {-1, -1});
-            fire(new float[] {-1, 1});
-            fire(new float[] {1, -1});
-            fire(new float[] {1, 1});
-        }
+            Random rdm = new Random();
+            float[] v0 = new float[] {2*rdm.nextFloat()-1, 2*rdm.nextFloat()-1};
+            v0 = Util.normalize(v0);
+            float[] v1 = Util.normalize(Util.orthvect(v0));
+            float[] v2 = Util.normalize(new float[] {-v0[0], -v0[1]});
+            float[] v3 = Util.normalize(new float[] {-v1[0], -v1[1]});
+            fire(v0);
+            fire(v1);
+            fire(v2);
+            fire(v3);
+        } else cooldown--;
         moveBullets();
         if(player.collides(bX+vect[0]*scale-W/2f, bY+vect[1]*scale-H/2f, W, H)) {
             bulletListen.onBulletHit(id);

@@ -12,6 +12,8 @@
         android:id="@+id/CSTRLYT_bulletjoycon"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
+        android:layout_marginEnd="8dp"
+        android:padding="8dp"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toStartOf="@+id/PV_player"
         app:layout_constraintStart_toStartOf="parent"
@@ -19,8 +21,8 @@
 
         <com.example.bullethellworld.views.JoyconView
             android:id="@+id/JV_bullet"
-            android:layout_width="96dp"
-            android:layout_height="96dp"
+            android:layout_width="108dp"
+            android:layout_height="108dp"
             android:layout_marginTop="16dp"
             android:layout_marginBottom="16dp"
             app:layout_constraintBottom_toBottomOf="parent"
@@ -32,7 +34,7 @@
     <view
         android:id="@+id/PV_player"
         class="com.example.bullethellworld.views.PlayingFieldView"
-        android:layout_width="486dp"
+        android:layout_width="420dp"
         android:layout_height="0dp"
         android:background="@color/BG_dark_hilite"
         app:layout_constraintBottom_toBottomOf="parent"
@@ -44,6 +46,8 @@
         android:id="@+id/CSTRLYT_ctrl"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
+        android:layout_marginStart="8dp"
+        android:padding="8dp"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toEndOf="@+id/PV_player"
@@ -52,22 +56,11 @@
         <view
             android:id="@+id/JV_joycon"
             class="com.example.bullethellworld.views.JoyconView"
-            android:layout_width="96dp"
-            android:layout_height="96dp"
-            android:layout_marginBottom="8dp"
-            app:layout_constraintBottom_toTopOf="@+id/btnDebug"
+            android:layout_width="108dp"
+            android:layout_height="108dp"
             app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toStartOf="parent" />
-
-        <Button
-            android:id="@+id/btnDebug"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="pewpew"
-            android:visibility="invisible"
-            app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toStartOf="parent" />
+            app:layout_constraintStart_toStartOf="parent"
+            tools:layout_editor_absoluteY="33dp" />
 
         <TextView
             android:id="@+id/TV_score"

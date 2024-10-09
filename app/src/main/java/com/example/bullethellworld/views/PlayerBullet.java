@@ -5,9 +5,13 @@ import android.graphics.Color;
 import android.graphics.Paint;
 import android.util.Log;
 
+import com.example.bullethellworld.Const;
+import com.example.bullethellworld.Side;
+import com.example.bullethellworld.Util;
+
 public class PlayerBullet implements DrawableEntity, Collidable {
     Paint p;
-    float[] pos, vect;
+    public float[] pos, vect;
 
     boolean dead = false;
 
@@ -28,7 +32,7 @@ public class PlayerBullet implements DrawableEntity, Collidable {
     }
 
     public void move() {
-        if(field.collides(pos[0]+vect[0]*Const.PL_BLT_SPEED, pos[1]+vect[1]*Const.PL_BLT_SPEED, 2, 2)!=Side.NONE) {
+        if(field.collides(pos[0]+vect[0]* Const.PL_BLT_SPEED, pos[1]+vect[1]*Const.PL_BLT_SPEED, 2, 2)!= Side.NONE) {
             dead = true;
         } else {
             pos[0] += vect[0]*Const.PL_BLT_SPEED;
@@ -48,32 +52,30 @@ public class PlayerBullet implements DrawableEntity, Collidable {
         return hit;
     }
 
-    public boolean hit_player(Player plyr) {
-        boolean hit = (pos[0]>(plyr.pX)
-                && pos[0]<(plyr.pX+plyr.W)
-                && pos[1]>(plyr.pY)
-                && pos[1]<(plyr.pY+plyr.H));
-        if(hit) {
-            Log.d("HIT", "Playerbullet hit player");
-        }
-
-        return hit;
-    }
 
     @Override
     public void draw(Canvas c) {
-        c.drawLine(pos[0]-vect[0]*Const.PL_BLT_LEN/2,
-                pos[1]-vect[1]*Const.PL_BLT_LEN/2,
-                pos[0]+vect[0]*Const.PL_BLT_LEN/2,
-                pos[1]+vect[1]*Const.PL_BLT_LEN/2,
+        float scale = is_from_player ? Const.PL_BLT_LEN/2f : Const.BLT_BLT_LEN/2f;
+        c.drawLine(pos[0]-vect[0]*scale,
+                pos[1]-vect[1]*scale,
+                pos[0]+vect[0]*scale,
+                pos[1]+vect[1]*scale,
                 p);
+
     }
 
     @Override
     public Paint setPaint() {
         p = new Paint();
-        p.setColor(Color.argb(255, 208, 255, 130));
-        p.setStrokeWidth(4f);
+        if(is_from_player) {
+            p.setColor(Color.argb(255, 208, 255, 130));
+            p.setStrokeWidth(4f);
+        }
+        else {
+            p.setColor(Color.argb(255, 222, 84, 146));
+            p.setStrokeWidth(8f);
+        }
+
 
         return p;
     }

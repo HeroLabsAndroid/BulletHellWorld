@@ -1,6 +1,14 @@
-package com.example.bullethellworld.views;
+package com.example.bullethellworld;
 
 public class Util {
+    public static float[] orthvect(float[] vect) {
+        float[] out = new float[2];
+        out[0] = 1/vect[0];
+        out[1] = -1/vect[1];
+
+        return normalize(out);
+    }
+
     public static float[] normalize(float[] vect, float scale) {
         float[] out = new float[vect.length];
         double sq_sum_root = 0;

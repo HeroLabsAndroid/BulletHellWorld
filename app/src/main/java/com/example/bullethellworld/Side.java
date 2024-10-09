@@ -1,4 +1,4 @@
-package com.example.bullethellworld.views;
+package com.example.bullethellworld;
 
 import java.util.Random;
 
