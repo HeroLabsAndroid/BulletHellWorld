@@ -15,5 +15,6 @@ public class Const {
     public static final int BLT_BLT_LEN = 8;
     public static final int PL_FIRERATE = 42;
     public static final int NME_FIRERATE = 200;
+    public static final int BLT_FIRERATE = 96;
     public static final float PL_BLT_SPEED = 2f;
 }

@@ -1,5 +1,8 @@
 package com.example.bullethellworld.views;
 
+import static androidx.core.content.res.ResourcesCompat.getColor;
+import static androidx.core.content.res.ResourcesCompat.getFont;
+import static com.example.bullethellworld.activities.MainActivity.ingame;
 import static java.lang.Math.max;
 import static java.lang.Math.min;
 
@@ -7,6 +10,8 @@ import android.content.Context;
 import android.graphics.Canvas;
 import android.graphics.Color;
 import android.graphics.Paint;
+import android.graphics.Rect;
+import android.graphics.Typeface;
 import android.util.AttributeSet;
 import android.util.Log;
 import android.view.View;
@@ -15,6 +20,7 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 
 import com.example.bullethellworld.Const;
+import com.example.bullethellworld.R;
 import com.example.bullethellworld.Util;
 import com.example.bullethellworld.activities.MainActivity;
 
@@ -28,7 +34,7 @@ public class PlayingFieldView extends View implements Bullet.BulletEventListener
     Field field;
     Player player;
     EnemyShip enemy;
-
+    private Context con;
 
     boolean unmeasured = true;
 
@@ -46,7 +52,10 @@ public class PlayingFieldView extends View implements Bullet.BulletEventListener
 
     public PlayingFieldView(Context context, @Nullable AttributeSet attrs) {
         super(context, attrs);
-        p.setColor(Color.argb(255, 196, 96, 224));
+        p.setColor(getColor(getResources(), R.color.TXT_hilite, null));
+        p.setTextSize(96);
+        p.setTypeface(getFont(context, R.font.finger_paint));
+        con = context;
 
     }
 
@@ -71,7 +80,7 @@ public class PlayingFieldView extends View implements Bullet.BulletEventListener
         nme_vect[0] = rdm.nextFloat()*2-1;
         nme_vect[1] = rdm.nextFloat();
         nme_vect = Util.normalize(nme_vect);
-        enemy = new EnemyShip(nmeX, nmeY, nme_vect, field, player, this, Const.NME_FIRERATE);
+        enemy = new EnemyShip(nmeX, nmeY, nme_vect, field, player, this, Const.NME_FIRERATE, con);
     }
 
 
@@ -133,9 +142,19 @@ public class PlayingFieldView extends View implements Bullet.BulletEventListener
     protected void onDraw(@NonNull Canvas canvas) {
         super.onDraw(canvas);
 
-        field.draw(canvas);
-        player.draw(canvas);
-        enemy.draw(canvas);
+        if(ingame) {
+            field.draw(canvas);
+            player.draw(canvas);
+            enemy.draw(canvas);
+        } else {
+            field.draw(canvas);
+            String btnText = "BOOP";
+            Rect txtBnds = new Rect();
+            p.getTextBounds(btnText, 0, btnText.length(), txtBnds);
+
+            canvas.drawText("BOOP", field.width()/2f-txtBnds.width()/2f, field.width()/2f-txtBnds.height(), p);
+        }
+
     }
 
 

@@ -3,12 +3,19 @@ package com.example.bullethellworld.views;
 import static java.lang.Math.max;
 import static java.lang.Math.min;
 
+import android.content.Context;
+import android.content.res.Resources;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.graphics.Canvas;
 import android.graphics.Color;
 import android.graphics.Paint;
+import android.graphics.Rect;
+import android.graphics.drawable.Drawable;
 import android.util.Log;
 
 import com.example.bullethellworld.Const;
+import com.example.bullethellworld.R;
 import com.example.bullethellworld.Side;
 import com.example.bullethellworld.Util;
 
@@ -35,13 +42,17 @@ public class EnemyShip implements DrawableEntity, Collidable {
 
     int bullet_ctr = 0;
 
+    private Bitmap sprite;
+    private Context con;
+
     public ArrayList<Bullet> getBullets() {
         return bullets;
     }
 
-    public EnemyShip(float x, float y, float[] vect, Field f, Collidable player, Bullet.BulletEventListener bel, int cooldown) {
+    public EnemyShip(float x, float y, float[] vect, Field f, Collidable player, Bullet.BulletEventListener bel, int cooldown, Context con) {
         pX = x;
         pY = y;
+        this.con = con;
         this.vect = vect;
         this.player = player;
         field = f;
@@ -49,6 +60,8 @@ public class EnemyShip implements DrawableEntity, Collidable {
         this.bel = bel;
         this.cooldown = cooldown;
         cooldown_Time = cooldown;
+        sprite = BitmapFactory.decodeResource(con.getResources(), R.drawable.nme_ship);
+
     }
 
     public void reset() {
@@ -75,7 +88,7 @@ public class EnemyShip implements DrawableEntity, Collidable {
         v[1] = (rdm.nextBoolean() ? -1 : 1) * rdm.nextFloat();
         v = Util.normalize(v, Const.BLT_SPEED_BASE);
 
-        bullets.add(new Bullet(pos[0], pos[1], v, player, field, bel, bullet_ctr, Const.NME_FIRERATE+rdm.nextInt(420)));
+        bullets.add(new Bullet(pos[0], pos[1], v, player, field, bel, bullet_ctr, Const.BLT_FIRERATE+rdm.nextInt(69)));
         bullet_ctr++;
 
     }
@@ -145,6 +158,7 @@ public class EnemyShip implements DrawableEntity, Collidable {
         c.drawLine(pX+W-W/6f, pY+H/4f, pX+W-2*W/6f, pY+2*H/5f, paint);
         c.drawCircle(pX+4*W/5f, pY+3*H/7f, W/12f, paint);
         c.drawArc(pX+2*W/5f, pY+4*H/6f, pX+3*W/5f, pY+5*H/6f, 0f, 180f, false, paint);
+//        c.drawBitmap(sprite, null, new Rect((int) pX, (int) pY, (int) (pX+W), (int) (pY+W)), paint);
         for(Bullet pb: bullets) {
             pb.draw(c);
         }
@@ -163,5 +177,10 @@ public class EnemyShip implements DrawableEntity, Collidable {
     @Override
     public boolean collides(float x0, float y0, int w, int h) {
         return (pX+W >= x0 && pX <= x0+w && pY+H >= y0 && pY <= y0+h);
+    }
+
+    @Override
+    public float[] getPos() {
+        return new float[] {pX, pY};
     }
 }

@@ -87,4 +87,9 @@ public class PlayerBullet implements DrawableEntity, Collidable {
 
         return out;
     }
+
+    @Override
+    public float[] getPos() {
+        return pos;
+    }
 }

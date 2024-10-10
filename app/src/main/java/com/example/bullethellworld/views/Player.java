@@ -68,6 +68,7 @@ public class Player implements DrawableEntity, Collidable {
 
     @Override
     public void draw(Canvas c) {
+
         c.drawRoundRect(pX,pY,pX+W,pY+H,4f, 4f, paint);
 
         paint.setStyle(Paint.Style.FILL_AND_STROKE);
@@ -93,5 +94,10 @@ public class Player implements DrawableEntity, Collidable {
     @Override
     public boolean collides(float x0, float y0, int w, int h) {
         return (pX+W >= x0 && pX <= x0+w && pY+H >= y0 && pY <= y0+h);
+    }
+
+    @Override
+    public float[] getPos() {
+        return new float[] {pX, pY};
     }
 }
