@@ -8,8 +8,10 @@ import android.content.Context;
 import android.graphics.Bitmap;
 import android.graphics.Canvas;
 import android.graphics.Color;
+import android.graphics.Matrix;
 import android.graphics.Paint;
 import android.graphics.Rect;
+import android.graphics.RectF;
 import android.util.Log;
 
 import com.example.bullethellworld.Const;
@@ -82,20 +84,25 @@ public class Player implements DrawableEntity, Collidable {
 
     @Override
     public void draw(Canvas c) {
-        /*
-        c.drawRoundRect(pX,pY,pX+W,pY+H,4f, 4f, paint);
 
-        paint.setStyle(Paint.Style.FILL_AND_STROKE);
+        //c.drawRoundRect(pX,pY,pX+W,pY+H,4f, 4f, paint);
+
+        /*paint.setStyle(Paint.Style.FILL_AND_STROKE);
         c.drawCircle(pX+W/5f, pY+H/3f, W/12f, paint);
         c.drawCircle(pX+4*W/5f, pY+H/3f, W/12f, paint);
         paint.setStyle(Paint.Style.STROKE);
         c.drawArc(pX+W/4f, pY+4*H/6f, pX+3*W/4f, pY+5*H/6f, 0f, 90f, false, paint);*/
 
 
-        c.save();
-        c.rotate((float)(Util.vectang(new double[] {0, 1}, vect)/(PI*2)*360), pX, pY);
-        c.drawBitmap(sprite, null, new Rect((int) pX, (int) pY, (int) (pX+W), (int) (pY+H)), paint);
-        c.restore();
+
+        float rotang = (float)(180+((vect[0]<0) ? 1 : -1)*Util.vectang(new double[] {0, 1}, vect)/(PI)*180);
+        Matrix matrix = new Matrix();
+
+        matrix.postScale(W/(float)sprite.getWidth(), H/(float)sprite.getHeight());
+        matrix.postRotate(rotang);
+        Bitmap sprite_rot = Bitmap.createBitmap(sprite, 0, 0, sprite.getWidth(), sprite.getHeight(), matrix, true);
+
+        c.drawBitmap(sprite_rot, pX, pY, paint);
         for(PlayerBullet pb: bullets) {
             pb.draw(c);
         }

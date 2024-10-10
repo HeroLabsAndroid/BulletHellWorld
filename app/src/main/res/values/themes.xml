@@ -6,4 +6,9 @@
     </style>
 
     <style name="Theme.BulletHellWorld" parent="Base.Theme.BulletHellWorld" />
+
+    <style name="DialogTheme" parent="Theme.AppCompat.Light.NoActionBar">
+        <item name="android:windowEnterAnimation">@anim/fade_in_anim</item>
+    </style>
+
 </resources>

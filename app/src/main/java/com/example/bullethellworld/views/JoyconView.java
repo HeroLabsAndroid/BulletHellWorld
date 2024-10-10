@@ -12,6 +12,8 @@ import android.view.View;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 
+import com.example.bullethellworld.Const;
+
 import java.util.Locale;
 
 public class JoyconView extends View {
@@ -114,7 +116,7 @@ public class JoyconView extends View {
                 py = (float) scaled_coords[1];
                // Log.d("JOYCON_TOUCH", String.format(Locale.getDefault(), "  scaled: x=%f, y=%f", px, py));
             }// else Log.d("JOYCON_TOUCH", String.format(Locale.getDefault(), "dist=%f, max=%f: NOT scaling coords", dist, maxdist));
-            jListen.onJoyconMoved(new float[] {px/maxdist*8, py/maxdist*8}, ctrl);
+            jListen.onJoyconMoved(new float[] {px/maxdist* Const.PL_SPEED, py/maxdist*Const.PL_SPEED}, ctrl);
             invalidate();
         } else if(event.getAction()==MotionEvent.ACTION_UP) {
             px = 0;

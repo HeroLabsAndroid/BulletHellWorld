@@ -8,6 +8,8 @@ import android.util.Log;
 import android.view.Display;
 import android.view.View;
 import android.view.WindowManager;
+import android.view.animation.Animation;
+import android.view.animation.AnimationUtils;
 import android.widget.Button;
 import android.widget.ImageButton;
 import android.widget.TextView;
@@ -165,7 +167,6 @@ public class MainActivity extends AppCompatActivity implements JoyconView.Joycon
         paused = true;
         ingame = false;
         GameOverDialog goDial = new GameOverDialog(this, score, this);
-
         goDial.show(activity_ref.getSupportFragmentManager(), "gameover");
     }
 
