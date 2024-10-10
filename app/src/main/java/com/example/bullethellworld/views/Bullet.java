@@ -135,16 +135,18 @@ public class Bullet implements DrawableEntity {
 
     public void move(float scale) {
         if(cooldown <= 0) {
-            Random rdm = new Random();
-            float[] v0 = new float[] {player.getPos()[0]-bX, player.getPos()[1]-bY};//{2*rdm.nextFloat()-1, 2*rdm.nextFloat()-1};
-            v0 = Util.normalize(v0, BLT_BLT_SPEED);
+            if(Util.vectval(new double[] {player.getPos()[0]-bX, player.getPos()[1]-bY}) < Const.BLT_MINDIST_FIRE) {
+                Random rdm = new Random();
+                float[] v0 = new float[]{player.getPos()[0] - bX, player.getPos()[1] - bY};//{2*rdm.nextFloat()-1, 2*rdm.nextFloat()-1};
+                v0 = Util.normalize(v0, BLT_BLT_SPEED);
             /*float[] v1 = Util.normalize(Util.orthvect(v0));
             float[] v2 = Util.normalize(new float[] {-v0[0], -v0[1]});
             float[] v3 = Util.normalize(new float[] {-v1[0], -v1[1]});*/
-            fire(v0);
+                fire(v0);
             /*fire(v1);
             fire(v2);
             fire(v3);*/
+            }
         } else cooldown--;
         moveBullets();
         if(player.collides(bX+vect[0]*scale-W/2f, bY+vect[1]*scale-H/2f, W, H)) {
