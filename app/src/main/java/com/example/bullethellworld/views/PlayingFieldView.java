@@ -71,7 +71,7 @@ public class PlayingFieldView extends View implements Bullet.BulletEventListener
     public void setFieldAndPlayer(int w, int h) {
         field = new Field(w, h);
         Log.d("PLAYER", String.format(Locale.getDefault(), "fieldsize is (%d, %d)", w, h));
-        player = new Player(w/2f, h/2f, field);
+        player = new Player(w/2f, h/2f, field, con);
         Random rdm = new Random();
         int nmeX = rdm.nextInt(field.width());
         int nmeY = 16;
@@ -87,8 +87,11 @@ public class PlayingFieldView extends View implements Bullet.BulletEventListener
 
 
     public void movePlayer(float x, float y) {
-        player.move(x, y);
-        if(player.cooldown > 0) player.cooldown --;
+        if(ingame) {
+            player.move(x, y);
+            if(player.cooldown > 0) player.cooldown --;
+        }
+
     }
 
     public void moveEnemy(float scale) {

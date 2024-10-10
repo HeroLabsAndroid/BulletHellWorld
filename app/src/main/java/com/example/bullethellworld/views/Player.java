@@ -4,12 +4,17 @@ import static java.lang.Math.PI;
 import static java.lang.Math.max;
 import static java.lang.Math.min;
 
+import android.content.Context;
+import android.graphics.Bitmap;
 import android.graphics.Canvas;
 import android.graphics.Color;
 import android.graphics.Paint;
+import android.graphics.Rect;
 import android.util.Log;
 
 import com.example.bullethellworld.Const;
+import com.example.bullethellworld.R;
+import com.example.bullethellworld.Util;
 
 import java.util.ArrayList;
 
@@ -30,11 +35,19 @@ public class Player implements DrawableEntity, Collidable {
         return bullets;
     }
 
-    public Player(float x, float y, Field f) {
+    private Bitmap sprite;
+    private Context con;
+
+    private double[] vect = new double[2];
+
+    public Player(float x, float y, Field f, Context con) {
         pX = x;
         pY = y;
         field = f;
         paint = setPaint();
+        this.con = con;
+        sprite = Util.getBitmap(con, R.drawable.player);
+        vect = new double[] {0,1};
     }
 
     public void fire(float[] vect) {
@@ -62,20 +75,27 @@ public class Player implements DrawableEntity, Collidable {
       //  Log.d("PLAYER", String.format(Locale.getDefault(), "pos+shift is (%.1f, %.1f)", pX+x, pY+y));
         pX = min(field.width()-W, max(0, pX+x));
         pY = min(field.height()-H, max(0, pY+y));
+        if(x!=0 || y!=0) {vect[0] = x; vect[1] = y;}
         if(!bullets.isEmpty()) moveBullets();
      //   Log.d("PLAYER", String.format(Locale.getDefault(), "moved player to (%.1f, %.1f)", pX, pY));
     }
 
     @Override
     public void draw(Canvas c) {
-
+        /*
         c.drawRoundRect(pX,pY,pX+W,pY+H,4f, 4f, paint);
 
         paint.setStyle(Paint.Style.FILL_AND_STROKE);
         c.drawCircle(pX+W/5f, pY+H/3f, W/12f, paint);
         c.drawCircle(pX+4*W/5f, pY+H/3f, W/12f, paint);
         paint.setStyle(Paint.Style.STROKE);
-        c.drawArc(pX+W/4f, pY+4*H/6f, pX+3*W/4f, pY+5*H/6f, 0f, 90f, false, paint);
+        c.drawArc(pX+W/4f, pY+4*H/6f, pX+3*W/4f, pY+5*H/6f, 0f, 90f, false, paint);*/
+
+
+        c.save();
+        c.rotate((float)(Util.vectang(new double[] {0, 1}, vect)/(PI*2)*360), pX, pY);
+        c.drawBitmap(sprite, null, new Rect((int) pX, (int) pY, (int) (pX+W), (int) (pY+H)), paint);
+        c.restore();
         for(PlayerBullet pb: bullets) {
             pb.draw(c);
         }

@@ -1,8 +1,8 @@
 package com.example.bullethellworld;
 
 public class Const {
-    public static final int PL_SIZE = 32;
-    public static final int NME_SIZE = 48;
+    public static final int PL_SIZE = 38;
+    public static final int NME_SIZE = 54;
     public static final int BLT_SIZE = 16;
     public static final int BLT_MAXAGE = 8;
     public static final float BLT_SPEED_BASE = 2f;

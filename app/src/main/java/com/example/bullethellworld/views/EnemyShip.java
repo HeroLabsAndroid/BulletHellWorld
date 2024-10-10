@@ -58,23 +58,12 @@ public class EnemyShip implements DrawableEntity, Collidable {
         field = f;
         paint = setPaint();
         this.bel = bel;
+
+        sprite = Util.getBitmap(con, R.drawable.nme_ship);
         this.cooldown = cooldown;
         cooldown_Time = cooldown;
-        sprite = BitmapFactory.decodeResource(con.getResources(), R.drawable.nme_ship);
-
     }
 
-    public void reset() {
-        Random rdm = new Random();
-        for(Bullet b: bullets) b.remove();
-        bullets = new ArrayList<>();
-        pX = rdm.nextInt(field.width());
-        pY = 16;
-        cooldown = cooldown_Time;
-        vect[0] = (rdm.nextBoolean() ? -1 : 1) * rdm.nextFloat();
-        vect[1] = rdm.nextFloat();
-        vect = Util.normalize(vect, Const.BLT_SPEED_BASE);
-    }
 
     public void fire() {
         float[] v = new float[2];
@@ -152,13 +141,13 @@ public class EnemyShip implements DrawableEntity, Collidable {
 
     @Override
     public void draw(Canvas c) {
-        c.drawRoundRect(pX,pY,pX+W,pY+H,4f, 4f, paint);
+        /*c.drawRoundRect(pX,pY,pX+W,pY+H,4f, 4f, paint);
         c.drawLine(pX+W/6f, pY+H/4f, pX+2*W/6f, pY+2*H/5f, paint);
         c.drawCircle(pX+W/5f, pY+3*H/7f, W/12f, paint);
         c.drawLine(pX+W-W/6f, pY+H/4f, pX+W-2*W/6f, pY+2*H/5f, paint);
         c.drawCircle(pX+4*W/5f, pY+3*H/7f, W/12f, paint);
-        c.drawArc(pX+2*W/5f, pY+4*H/6f, pX+3*W/5f, pY+5*H/6f, 0f, 180f, false, paint);
-//        c.drawBitmap(sprite, null, new Rect((int) pX, (int) pY, (int) (pX+W), (int) (pY+W)), paint);
+        c.drawArc(pX+2*W/5f, pY+4*H/6f, pX+3*W/5f, pY+5*H/6f, 0f, 180f, false, paint);*/
+        c.drawBitmap(sprite, null, new Rect((int) pX, (int) pY, (int) (pX+W), (int) (pY+W)), paint);
         for(Bullet pb: bullets) {
             pb.draw(c);
         }
