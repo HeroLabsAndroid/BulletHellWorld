@@ -58,6 +58,7 @@ public class MainActivity extends AppCompatActivity implements JoyconView.Joycon
 
 // Clock //
     final Handler handler = new Handler();
+    Timer goTim = new Timer();
     Timer timer = new Timer(false);
     TimerTask timerTask = new TimerTask() {
         @Override
@@ -120,7 +121,7 @@ public class MainActivity extends AppCompatActivity implements JoyconView.Joycon
                 }
             }
         });
-
+        goTim.purge();
 
         timer.scheduleAtFixedRate(timerTask, 10, 10); // 1000 = 1 second.
     }
@@ -163,27 +164,23 @@ public class MainActivity extends AppCompatActivity implements JoyconView.Joycon
         }
     }
 
-    private void show_gameover_dialog() {
-
+    private void show_gameover_dialog(String msg) {
+        Log.d("GAme OVER!", msg);
         GameOverDialog goDial = new GameOverDialog(this, score, this);
         goDial.show(activity_ref.getSupportFragmentManager(), "gameover");
     }
 
     @Override
-    public void gameOver() {
+    public void gameOver(String msg) {
         paused = true;
 
-        Timer goTim = new Timer();
-        TimerTask goTask = new TimerTask() {
+        new Timer().schedule(new TimerTask() {
             @Override
             public void run() {
-                handler.post(() -> {
-                            show_gameover_dialog();
-                        }
-                );
+                show_gameover_dialog(msg);
             }
-        };
-        goTim.schedule(goTask, 420);
+        }, 420);
+
     }
 
     @Override

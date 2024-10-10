@@ -22,7 +22,7 @@ public class Bullet implements DrawableEntity {
 
     public interface BulletEventListener {
         void onBulletAged(int id);
-        void onBulletHit(int id);
+        void onBulletHit(String msg, int id);
     }
 
     public float bX, bY;
@@ -111,7 +111,7 @@ public class Bullet implements DrawableEntity {
         for(PlayerBullet pb: bullets) {
             pb.move();
             if(player.collides(pb.pos[0], pb.pos[1], 1, 1)) {
-                bulletListen.onBulletHit(-1);
+                bulletListen.onBulletHit("hit by smol bullet from bullet nr"+id, id);
             }
         }
     }
@@ -152,7 +152,7 @@ public class Bullet implements DrawableEntity {
         } else cooldown--;
         moveBullets();
         if(player.collides(bX+vect[0]*scale-W/2f, bY+vect[1]*scale-H/2f, W, H)) {
-            bulletListen.onBulletHit(id);
+            bulletListen.onBulletHit("player hit bullet nr "+id, id);
             Log.d("BULLET_COLLISION", String.format(Locale.getDefault(),"collision on player"));
         }
         Side colside = field.collides(bX+vect[0]*scale, bY+vect[1]*scale, W, H);

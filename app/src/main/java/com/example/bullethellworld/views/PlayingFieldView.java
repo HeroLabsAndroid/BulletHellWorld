@@ -41,7 +41,7 @@ public class PlayingFieldView extends View implements Bullet.BulletEventListener
 
 
     public interface GameOverListener {
-        void gameOver();
+        void gameOver(String msg);
     }
 
     GameOverListener goListen;
@@ -127,8 +127,8 @@ public class PlayingFieldView extends View implements Bullet.BulletEventListener
     }
 
     @Override
-    public void onBulletHit(int id) {
-        goListen.gameOver();
+    public void onBulletHit(String msg, int id) {
+        goListen.gameOver(msg);
     }
 
     @Override
