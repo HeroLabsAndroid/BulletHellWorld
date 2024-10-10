@@ -110,7 +110,9 @@ public class Bullet implements DrawableEntity {
         }
         for(PlayerBullet pb: bullets) {
             pb.move();
-            if(player.collides(pb.pos[0], pb.pos[1], 2, 2)) bulletListen.onBulletHit(0);
+            if(player.collides(pb.pos[0], pb.pos[1], 1, 1)) {
+                bulletListen.onBulletHit(-1);
+            }
         }
     }
 
@@ -135,7 +137,7 @@ public class Bullet implements DrawableEntity {
 
     public void move(float scale) {
         if(cooldown <= 0) {
-            if(Util.vectval(new double[] {player.getPos()[0]-bX, player.getPos()[1]-bY}) < Const.BLT_MINDIST_FIRE) {
+            if(Util.vectval(new double[] {player.getPos()[0]-bX, player.getPos()[1]-bY}) > Const.BLT_MINDIST_FIRE) {
                 Random rdm = new Random();
                 float[] v0 = new float[]{player.getPos()[0] - bX, player.getPos()[1] - bY};//{2*rdm.nextFloat()-1, 2*rdm.nextFloat()-1};
                 v0 = Util.normalize(v0, BLT_BLT_SPEED);
@@ -151,6 +153,7 @@ public class Bullet implements DrawableEntity {
         moveBullets();
         if(player.collides(bX+vect[0]*scale-W/2f, bY+vect[1]*scale-H/2f, W, H)) {
             bulletListen.onBulletHit(id);
+            Log.d("BULLET_COLLISION", String.format(Locale.getDefault(),"collision on player"));
         }
         Side colside = field.collides(bX+vect[0]*scale, bY+vect[1]*scale, W, H);
         if(colside != Side.NONE)

@@ -120,7 +120,10 @@ public class Player implements DrawableEntity, Collidable {
 
     @Override
     public boolean collides(float x0, float y0, int w, int h) {
-        return (pX+W >= x0 && pX <= x0+w && pY+H >= y0 && pY <= y0+h);
+        boolean out =  (pX+W-W/6f >= x0 && pX+W/6f <= x0+w && pY+H-H/6f >= y0 && pY+H/6f <= y0+h);
+        if(out == true) {
+            return out;
+        } else return out;
     }
 
     @Override

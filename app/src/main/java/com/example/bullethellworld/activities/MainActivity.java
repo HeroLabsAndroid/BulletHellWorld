@@ -164,22 +164,36 @@ public class MainActivity extends AppCompatActivity implements JoyconView.Joycon
     }
 
     private void show_gameover_dialog() {
-        paused = true;
-        ingame = false;
+
         GameOverDialog goDial = new GameOverDialog(this, score, this);
         goDial.show(activity_ref.getSupportFragmentManager(), "gameover");
     }
 
     @Override
     public void gameOver() {
-        show_gameover_dialog();
+        paused = true;
+
+        Timer goTim = new Timer();
+        TimerTask goTask = new TimerTask() {
+            @Override
+            public void run() {
+                handler.post(() -> {
+                            show_gameover_dialog();
+                        }
+                );
+            }
+        };
+        goTim.schedule(goTask, 420);
     }
 
     @Override
     public void onDialogDismissed() {
+
+
         score = 0;
         tvScore.setText("HOI!");
         playingFieldView.reset();
-        paused = false;
+        ingame = false;
+        playingFieldView.invalidate();
     }
 }

@@ -103,7 +103,7 @@ public class EnemyShip implements DrawableEntity, Collidable {
     }
 
     public void move(float scale) {
-        if(cooldown<=0) {
+        if(cooldown<=0 && Util.vectval(new double[] {player.getPos()[0]-pX, player.getPos()[1]-pY})>Const.BLT_MINDIST_FIRE) {
             fire();
             cooldown = cooldown_Time;
         } else cooldown--;
