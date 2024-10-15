@@ -11,6 +11,7 @@ import com.example.bullethellworld.Util;
 
 public class PlayerBullet implements DrawableEntity, Collidable {
     Paint p;
+    Paint hilitep;
     public float[] pos, vect;
 
     boolean dead = false;
@@ -52,28 +53,34 @@ public class PlayerBullet implements DrawableEntity, Collidable {
         return hit;
     }
 
-
     @Override
     public void draw(Canvas c) {
-        float scale = is_from_player ? Const.PL_BLT_LEN/2f : Const.BLT_BLT_LEN/2f;
-        c.drawLine(pos[0]-vect[0]*scale,
+        float scale = is_from_player ? 2*Const.PL_BLT_LEN/3f : Const.BLT_BLT_LEN;
+        c.drawCircle(pos[0], pos[1], scale, p);
+        c.drawCircle(pos[0]-1, pos[1]-1, scale/2, hilitep);
+        /*c.drawLine(pos[0]-vect[0]*scale,
                 pos[1]-vect[1]*scale,
                 pos[0]+vect[0]*scale,
                 pos[1]+vect[1]*scale,
-                p);
+                hilitep);*/
 
     }
 
     @Override
     public Paint setPaint() {
         p = new Paint();
+        hilitep = new Paint();
         if(is_from_player) {
-            p.setColor(Color.argb(255, 208, 255, 130));
+            p.setColor(Color.argb(255, 67, 76, 42));
             p.setStrokeWidth(4f);
+            hilitep.setColor(Color.argb(255, 198, 235, 136));
+            hilitep.setStrokeWidth(2f);
         }
         else {
-            p.setColor(Color.argb(255, 222, 84, 146));
+            p.setColor(Color.argb(255, 61, 37, 21));
             p.setStrokeWidth(8f);
+            hilitep.setColor(Color.argb(255,198, 180, 136));
+            hilitep.setStrokeWidth(4f);
         }
 
 

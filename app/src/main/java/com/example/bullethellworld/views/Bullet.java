@@ -4,6 +4,7 @@ import static com.example.bullethellworld.Const.BLT_BLT_SPEED;
 import static com.example.bullethellworld.Const.BLT_SIZE;
 import static com.example.bullethellworld.Const.CLR_BLT_NEW;
 
+import android.graphics.Bitmap;
 import android.graphics.Canvas;
 import android.graphics.Color;
 import android.graphics.Paint;
@@ -16,18 +17,39 @@ import com.example.bullethellworld.Util;
 import java.util.ArrayList;
 import java.util.Locale;
 import java.util.Random;
+import java.util.UUID;
 
 
 public class Bullet implements DrawableEntity {
 
+    public enum BulletType {
+        SINGLE, MULTI, BURST, NONE;
+
+        public static BulletType fromOrdinal(int o) {
+            switch (o) {
+                case 0:
+                    return SINGLE;
+                case 1:
+                    return MULTI;
+                case 2:
+                    return BURST;
+                default:
+                    return NONE;
+            }
+        }
+    }
+
+    public static final BulletType type= BulletType.NONE;
+    public static final double[] SPAWNCHANCES = new double[] {0.6, 0.2, 0.2};
+
     public interface BulletEventListener {
-        void onBulletAged(int id);
-        void onBulletHit(String msg, int id);
+        void onBulletAged(UUID id);
+        void onBulletHit(String msg, UUID id);
     }
 
     public float bX, bY;
     public final int W=BLT_SIZE, H=BLT_SIZE;
-    private float[] vect;
+    private float[] vct;
 
     int cooldown;
     int cooldown_Time;
@@ -40,26 +62,30 @@ public class Bullet implements DrawableEntity {
 
     BulletEventListener bulletListen;
 
-    private ArrayList<PlayerBullet> bullets = new ArrayList<>();
+    protected ArrayList<PlayerBullet> bullets = new ArrayList<>();
 
-    private int id = 0;
+    protected UUID id;
 
 
-    private int age = 0;
+    protected int age = 0;
+
+    protected Bitmap sprite;
+    protected int hit_cooldown = -1;
 
     /*------------- GETTERS & SETTERS -------------------------*/
 
     public int getAge() {return age;}
-    public int getID() {return id;}
+    public UUID getID() {return id;}
 
     public ArrayList<PlayerBullet> getBullets() {return bullets;}
 
     /*------------- CONSTRUCTORS ------------------------------*/
 
-    public Bullet(float x, float y, float[] vect, Collidable player, Frame field, BulletEventListener bulletListen, int id, int cooldown) {
+    public Bullet(float x, float y, float[] vct, Collidable player, Frame field, BulletEventListener bulletListen, UUID id, int cooldown) {
         bX = x;
         bY = y;
-        this.vect = vect;
+        this.vct = vct;
+        age = -1;
         paint = setPaint();
         this.player = player;
         this.field = field;
@@ -73,7 +99,7 @@ public class Bullet implements DrawableEntity {
         return (float)age/(float) Const.BLT_MAXAGE;
     }
 
-    public void remove() {
+    protected void remove() {
         age = Const.BLT_MAXAGE+1;
     }
 
@@ -105,15 +131,20 @@ public class Bullet implements DrawableEntity {
     }
 
     public void moveBullets() {
+
         for(int i=bullets.size()-1; i>=0; i--) {
             if(bullets.get(i).dead) bullets.remove(i);
         }
         for(PlayerBullet pb: bullets) {
             pb.move();
-            if(player.collides(pb.pos[0], pb.pos[1], 1, 1)) {
-                bulletListen.onBulletHit("hit by smol bullet from bullet nr"+id, id);
+            if(!pb.dead && player.collides(pb.pos[0], pb.pos[1], 1, 1)) {
+                bulletListen.onBulletHit("hit by smol bullet from bullet nr"+id.toString(), id);
             }
         }
+    }
+
+    public void hit() {
+        hit_cooldown = Const.HIT_COOLDOWN;
     }
 
     @Override
@@ -136,52 +167,58 @@ public class Bullet implements DrawableEntity {
     }
 
     public void move(float scale) {
-        if(cooldown <= 0) {
-            if(Util.vectval(new double[] {player.getPos()[0]-bX, player.getPos()[1]-bY}) > Const.BLT_MINDIST_FIRE) {
-                Random rdm = new Random();
-                float[] v0 = new float[]{player.getPos()[0] - bX, player.getPos()[1] - bY};//{2*rdm.nextFloat()-1, 2*rdm.nextFloat()-1};
-                v0 = Util.normalize(v0, BLT_BLT_SPEED);
+        if(hit_cooldown==-1) {
+            if(cooldown <= 0) {
+                if(Util.vectval(new double[] {player.getPos()[0]-bX, player.getPos()[1]-bY}) > Const.BLT_MINDIST_FIRE) {
+                    Random rdm = new Random();
+                    float[] v0 = new float[]{player.getPos()[0] - bX, player.getPos()[1] - bY};//{2*rdm.nextFloat()-1, 2*rdm.nextFloat()-1};
+                    v0 = Util.normalize(v0, BLT_BLT_SPEED);
             /*float[] v1 = Util.normalize(Util.orthvect(v0));
             float[] v2 = Util.normalize(new float[] {-v0[0], -v0[1]});
             float[] v3 = Util.normalize(new float[] {-v1[0], -v1[1]});*/
-                fire(v0);
+                    fire(v0);
             /*fire(v1);
             fire(v2);
             fire(v3);*/
+                }
+            } else cooldown--;
+            moveBullets();
+            if(player.collides(bX+ vct[0]*scale-W/2f, bY+ vct[1]*scale-H/2f, W, H)) {
+                bulletListen.onBulletHit("player hit bullet nr "+id.toString(), id);
+                Log.d("BULLET_COLLISION", String.format(Locale.getDefault(),"collision on player"));
             }
-        } else cooldown--;
-        moveBullets();
-        if(player.collides(bX+vect[0]*scale-W/2f, bY+vect[1]*scale-H/2f, W, H)) {
-            bulletListen.onBulletHit("player hit bullet nr "+id, id);
-            Log.d("BULLET_COLLISION", String.format(Locale.getDefault(),"collision on player"));
-        }
-        Side colside = field.collides(bX+vect[0]*scale, bY+vect[1]*scale, W, H);
-        if(colside != Side.NONE)
-        {
-            Log.d("BULLET_COLLISION", String.format(Locale.getDefault(),"collision on side %s", colside.name()));
-        }
-        switch(field.collides(bX+vect[0]*scale, bY+vect[1]*scale, W, H)) {
-            case NONE:
-                break;
-            case TOP:
-            case BOTTOM:
-                vect[1] = -vect[1];
-                age++;
-                set_bullet_color();
-                break;
-            case LEFT:
-            case RIGHT:
-                vect[0] = -vect[0];
-                age++;
-                set_bullet_color();
-                break;
+            Side colside = field.collides(bX+ vct[0]*scale, bY+ vct[1]*scale, W, H);
+            if(colside != Side.NONE)
+            {
+                Log.d("BULLET_COLLISION", String.format(Locale.getDefault(),"collision on side %s", colside.name()));
+            }
+            switch(field.collides(bX+ vct[0]*scale, bY+ vct[1]*scale, W, H)) {
+                case NONE:
+                    break;
+                case TOP:
+                case BOTTOM:
+                    vct[1] = -vct[1];
+                    age++;
+                    set_bullet_color();
+                    break;
+                case LEFT:
+                case RIGHT:
+                    vct[0] = -vct[0];
+                    age++;
+                    set_bullet_color();
+                    break;
+            }
+
+            if(age > Const.BLT_MAXAGE) {
+                bulletListen.onBulletAged(id);
+            }
+
+            bX = bX + vct[0]*scale;
+            bY = bY + vct[1]*scale;
+        } else {
+            hit_cooldown--;
+            if(hit_cooldown == 0) remove();
         }
 
-        if(age > Const.BLT_MAXAGE) {
-            bulletListen.onBulletAged(id);
-        }
-
-        bX = bX + vect[0]*scale;
-        bY = bY + vect[1]*scale;
     }
 }

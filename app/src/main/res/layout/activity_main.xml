@@ -49,7 +49,7 @@
         class="com.example.bullethellworld.views.PlayingFieldView"
         android:layout_width="420dp"
         android:layout_height="0dp"
-        android:background="@color/BG_dark_hilite"
+        android:background="@drawable/ententeich"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toStartOf="@+id/CSTRLYT_ctrl"
         app:layout_constraintStart_toEndOf="@+id/CSTRLYT_bulletjoycon"
@@ -75,21 +75,19 @@
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent" />
 
-        <TextView
-            android:id="@+id/TV_score"
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="8dp"
-            android:layout_marginBottom="8dp"
-            android:fontFamily="@font/finger_paint"
-            android:text="TextView"
-            android:textAlignment="center"
-            android:textColor="@color/TXT_dark"
-            app:layout_constraintBottom_toTopOf="@+id/JV_joycon"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toTopOf="parent" />
-
     </androidx.constraintlayout.widget.ConstraintLayout>
+
+    <TextView
+        android:id="@+id/TV_score"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:fontFamily="@font/finger_paint"
+        android:text="TextView"
+        android:textAlignment="center"
+        android:textColor="@color/TXT_dark"
+        app:layout_constraintBottom_toTopOf="@+id/CSTRLYT_ctrl"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toEndOf="@+id/PV_player"
+        app:layout_constraintTop_toTopOf="parent" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>

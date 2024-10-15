@@ -21,11 +21,13 @@ import androidx.core.view.ViewCompat;
 import androidx.core.view.WindowInsetsCompat;
 import androidx.fragment.app.FragmentManager;
 
+import com.example.bullethellworld.Const;
 import com.example.bullethellworld.DialogDismissedListener;
 import com.example.bullethellworld.GameOverDialog;
 import com.example.bullethellworld.R;
 import com.example.bullethellworld.views.Bullet;
 import com.example.bullethellworld.views.JoyconView;
+import com.example.bullethellworld.views.Player;
 import com.example.bullethellworld.views.PlayingFieldView;
 
 import java.util.Locale;
@@ -33,7 +35,7 @@ import java.util.Random;
 import java.util.Timer;
 import java.util.TimerTask;
 
-public class MainActivity extends AppCompatActivity implements JoyconView.JoyconListener, PlayingFieldView.GameOverListener, DialogDismissedListener {
+public class MainActivity extends AppCompatActivity implements JoyconView.JoyconListener, PlayingFieldView.GameOverListener, DialogDismissedListener, Player.PlayerListener {
 
 
 
@@ -66,11 +68,10 @@ public class MainActivity extends AppCompatActivity implements JoyconView.Joycon
             handler.post(() -> {
                     if(!paused && ingame) {
                         update_ui();
-                        score += playingFieldView.getEnemy().bulletCount()*4;
-                        for(Bullet b: playingFieldView.getEnemy().getBullets()) {
+                        //score += playingFieldView.getEnemy().bulletCount()*4;
+                        /*for(Bullet b: playingFieldView.getEnemy().getBullets()) {
                             score += b.getBullets().size();
-                        }
-                        playingFieldView.getPlayer().cooldown--;
+                        }*/
                     }
                 }
             );
@@ -145,14 +146,20 @@ public class MainActivity extends AppCompatActivity implements JoyconView.Joycon
         heightMeasureSpec = View.MeasureSpec.makeMeasureSpec(deviceHeight, View.MeasureSpec.EXACTLY);
     }
 
+    @Override
+    protected void onStop() {
+        reset();
+        super.onStop();
+    }
+
     public void update_ui() {
         playingFieldView.movePlayer(playerPos[0], playerPos[1]);
-        playingFieldView.moveEnemy(1+score/100000f);
+        playingFieldView.moveEnemy(1+score/42f);
 
 
         playingFieldView.check_blt_plblt_coll();
         playingFieldView.invalidate();
-        tvScore.setText(String.format(Locale.getDefault(),"%d",score/100));
+        tvScore.setText(String.format(Locale.getDefault(),"%d",score));
     }
 
     @Override
@@ -174,23 +181,30 @@ public class MainActivity extends AppCompatActivity implements JoyconView.Joycon
     public void gameOver(String msg) {
         paused = true;
 
-        new Timer().schedule(new TimerTask() {
-            @Override
-            public void run() {
-                show_gameover_dialog(msg);
-            }
-        }, 420);
+        show_gameover_dialog(msg);
 
     }
 
-    @Override
-    public void onDialogDismissed() {
-
-
+    public void reset() {
         score = 0;
         tvScore.setText("HOI!");
         playingFieldView.reset();
         ingame = false;
         playingFieldView.invalidate();
+    }
+
+    @Override
+    public void onDialogDismissed() {
+        reset();
+    }
+
+    @Override
+    public void onEnemyHit() {
+        score++;
+        playingFieldView.getEnemy().hit_cooldown= Const.HIT_COOLDOWN;
+    }
+
+    public static int getScore() {
+        return score;
     }
 }

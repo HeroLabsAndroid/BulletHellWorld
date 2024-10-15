@@ -22,12 +22,18 @@ import java.util.ArrayList;
 
 public class Player implements DrawableEntity, Collidable {
 
+    public interface PlayerListener {
+        void onEnemyHit();
+    }
+
     public float pX, pY;
 
     public final int H= Const.PL_SIZE, W=Const.PL_SIZE;
 
     private Field field;
     private Paint paint;
+
+    private Collidable nmeShip;
 
     private ArrayList<PlayerBullet> bullets = new ArrayList<>();
 
@@ -36,13 +42,13 @@ public class Player implements DrawableEntity, Collidable {
     public ArrayList<PlayerBullet> getBullets() {
         return bullets;
     }
-
+    private PlayerListener plListen;
     private Bitmap sprite;
     private Context con;
 
     private double[] vect = new double[2];
 
-    public Player(float x, float y, Field f, Context con) {
+    public Player(float x, float y, Field f, Collidable nmeShip, Context con) {
         pX = x;
         pY = y;
         field = f;
@@ -50,6 +56,12 @@ public class Player implements DrawableEntity, Collidable {
         this.con = con;
         sprite = Util.getBitmap(con, R.drawable.player);
         vect = new double[] {0,1};
+        this.nmeShip = nmeShip;
+        this.plListen = (PlayerListener) con;
+    }
+
+    public void setEnemy(Collidable enemy) {
+        nmeShip = enemy;
     }
 
     public void fire(float[] vect) {
@@ -68,10 +80,15 @@ public class Player implements DrawableEntity, Collidable {
         }
         for(PlayerBullet pb: bullets) {
             pb.move();
+            if(nmeShip.collides(pb.getPos()[0], pb.getPos()[1], 2, 2)) {
+                plListen.onEnemyHit();
+                pb.dead = true;
+            }
         }
     }
 
     public void move(float x, float y) {
+        cooldown--;
        // Log.d("PLAYER", String.format(Locale.getDefault(), "shift is (%.1f, %.1f)", x, y));
        // Log.d("PLAYER", String.format(Locale.getDefault(), "fieldsize is (%d, %d)", field.width(), field.height()));
       //  Log.d("PLAYER", String.format(Locale.getDefault(), "pos+shift is (%.1f, %.1f)", pX+x, pY+y));
@@ -92,8 +109,6 @@ public class Player implements DrawableEntity, Collidable {
         c.drawCircle(pX+4*W/5f, pY+H/3f, W/12f, paint);
         paint.setStyle(Paint.Style.STROKE);
         c.drawArc(pX+W/4f, pY+4*H/6f, pX+3*W/4f, pY+5*H/6f, 0f, 90f, false, paint);*/
-
-
 
         float rotang = (float)(180+((vect[0]<0) ? 1 : -1)*Util.vectang(new double[] {0, 1}, vect)/(PI)*180);
         Matrix matrix = new Matrix();
@@ -120,10 +135,7 @@ public class Player implements DrawableEntity, Collidable {
 
     @Override
     public boolean collides(float x0, float y0, int w, int h) {
-        boolean out =  (pX+W-W/6f >= x0 && pX+W/6f <= x0+w && pY+H-H/6f >= y0 && pY+H/6f <= y0+h);
-        if(out == true) {
-            return out;
-        } else return out;
+        return (pX+W-W/6f >= x0 && pX+W/6f <= x0+w && pY+H-H/6f >= y0 && pY+H/6f <= y0+h);
     }
 
     @Override

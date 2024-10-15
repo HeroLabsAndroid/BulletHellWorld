@@ -24,8 +24,10 @@ import com.example.bullethellworld.R;
 import com.example.bullethellworld.Util;
 import com.example.bullethellworld.activities.MainActivity;
 
+import java.util.ArrayList;
 import java.util.Locale;
 import java.util.Random;
+import java.util.UUID;
 
 public class PlayingFieldView extends View implements Bullet.BulletEventListener {
 
@@ -71,9 +73,9 @@ public class PlayingFieldView extends View implements Bullet.BulletEventListener
     public void setFieldAndPlayer(int w, int h) {
         field = new Field(w, h);
         Log.d("PLAYER", String.format(Locale.getDefault(), "fieldsize is (%d, %d)", w, h));
-        player = new Player(w/2f, h/2f, field, con);
+        player = new Player(w/2f, h/2f, field, (Collidable) enemy, con);
         Random rdm = new Random();
-        int nmeX = rdm.nextInt(field.width());
+        int nmeX = Const.NME_SIZE+rdm.nextInt(field.width()-2*Const.NME_SIZE);
         int nmeY = 16;
 
         float[] nme_vect = new float[2];
@@ -81,6 +83,7 @@ public class PlayingFieldView extends View implements Bullet.BulletEventListener
         nme_vect[1] = rdm.nextFloat();
         nme_vect = Util.normalize(nme_vect);
         enemy = new EnemyShip(nmeX, nmeY, nme_vect, field, player, this, Const.NME_FIRERATE, con);
+        player.setEnemy(enemy);
     }
 
 
@@ -101,7 +104,7 @@ public class PlayingFieldView extends View implements Bullet.BulletEventListener
 
 
     @Override
-    public void onBulletAged(int id) {
+    public void onBulletAged(UUID id) {
         MainActivity.paused = true;
         int idx = enemy.bulletIndex(id);
         if(idx < 0) Log.e("onBulletAged", "ERROR: BULLET ID NOT FOUND");
@@ -114,7 +117,7 @@ public class PlayingFieldView extends View implements Bullet.BulletEventListener
             for(Bullet bl: enemy.getBullets()) {
                 if(pb.hit_bullet(bl)) {
                     pb.dead = true;
-                    bl.remove();
+                    bl.hit();
                 }
             }
         }
@@ -127,8 +130,9 @@ public class PlayingFieldView extends View implements Bullet.BulletEventListener
     }
 
     @Override
-    public void onBulletHit(String msg, int id) {
-        goListen.gameOver(msg);
+    public void onBulletHit(String msg, UUID id) {
+        Log.d("BULLET HIT", "ID="+enemy.bulletIndex(id)+", bulletcnt="+enemy.getBullets().size());
+        if(enemy.bulletIndex(id)>=0 && enemy.getBullets().get(enemy.bulletIndex(id)).age>=0) goListen.gameOver(msg);
     }
 
     @Override

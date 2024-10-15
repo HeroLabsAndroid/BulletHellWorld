@@ -2,13 +2,11 @@ package com.example.bullethellworld;
 
 
 import android.content.Context;
-import android.content.res.Resources;
 import android.graphics.Bitmap;
 import android.graphics.Canvas;
 import android.graphics.drawable.Drawable;
 
 import androidx.core.content.ContextCompat;
-import androidx.core.content.res.ResourcesCompat;
 
 public class Util {
     public static float[] orthvect(float[] vect) {
@@ -65,5 +63,13 @@ public class Util {
             scprod += v1[i]*v2[i];
         }
         return Math.acos(scprod/prprod);
+    }
+
+    public static float[] rotvect(float[] v, double ang) {
+        float[] out = {
+                (float)(v[0]*Math.cos(ang)-v[1]*Math.sin(ang)),
+                (float)(v[0]*Math.sin(ang)-v[1]*Math.cos(ang))
+        };
+        return out;
     }
 }

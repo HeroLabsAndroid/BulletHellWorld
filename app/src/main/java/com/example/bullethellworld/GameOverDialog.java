@@ -66,7 +66,7 @@ public class GameOverDialog extends DialogFragment {
             dismiss();
         });
 
-        tvScore.setText(String.format(Locale.getDefault(), "%s: %d", getResources().getString(score < hiscore ? R.string.MSG_score : R.string.MSG_hiscore), score/100));
+        tvScore.setText(String.format(Locale.getDefault(), "%s: %d", getResources().getString(score < hiscore ? R.string.MSG_score : R.string.MSG_hiscore), score));
         tvGameOverTitle.setText(getResources().getString(R.string.MSG_gameover));
 
 
