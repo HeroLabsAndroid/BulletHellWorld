@@ -141,7 +141,7 @@ public class EnemyShip implements DrawableEntity, Collidable {
         //   Log.d("PLAYER", String.format(Locale.getDefault(), "moved player to (%.1f, %.1f)", pX, pY));
 
         if(player.collides(pX+vect[0]*scale, pY+vect[1]*scale, W, H)) {
-            bel.onBulletHit("player hit enemy ship", new UUID(-1,-1));
+            bel.onBulletHit("NME_HIT", new UUID(-1,-1));
         }
         Side colside = field.collides(pX+vect[0]*scale, pY+vect[1]*scale, W, H);
         if(colside != Side.NONE)

@@ -117,7 +117,8 @@ public class PlayingFieldView extends View implements Bullet.BulletEventListener
             for(Bullet bl: enemy.getBullets()) {
                 if(pb.hit_bullet(bl)) {
                     pb.dead = true;
-                    bl.hit();
+                    if(bl.shielded) bl.shielded = false;
+                    else bl.hit();
                 }
             }
         }
@@ -132,7 +133,8 @@ public class PlayingFieldView extends View implements Bullet.BulletEventListener
     @Override
     public void onBulletHit(String msg, UUID id) {
         Log.d("BULLET HIT", "ID="+enemy.bulletIndex(id)+", bulletcnt="+enemy.getBullets().size());
-        if(enemy.bulletIndex(id)>=0 && enemy.getBullets().get(enemy.bulletIndex(id)).age>=0) goListen.gameOver(msg);
+        if((enemy.bulletIndex(id)>=0 && enemy.getBullets().get(enemy.bulletIndex(id)).age>=0)
+        || msg.contentEquals("NME_HIT")) goListen.gameOver(msg);
     }
 
     @Override

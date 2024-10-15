@@ -71,8 +71,13 @@ public class Bullet implements DrawableEntity {
 
     protected Bitmap sprite;
     protected int hit_cooldown = -1;
+    protected boolean shielded = true;
 
     /*------------- GETTERS & SETTERS -------------------------*/
+
+    public boolean isShielded() {
+        return shielded;
+    }
 
     public int getAge() {return age;}
     public UUID getID() {return id;}
@@ -122,6 +127,7 @@ public class Bullet implements DrawableEntity {
     }
 
     public void fire(float[] vect) {
+            shielded = false;
             PlayerBullet pb = new PlayerBullet(new float[] {bX+W/2f, bY+H/2f }, vect, field, false);
             pb.setPaint();
             bullets.add(pb);

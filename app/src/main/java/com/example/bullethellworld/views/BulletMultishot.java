@@ -45,6 +45,7 @@ public class BulletMultishot extends Bullet {
 
     @Override
     public void fire(float[] vect) {
+            shielded = false;
             PlayerBullet pb = new PlayerBullet(new float[] {bX+W/2f, bY+H/2f }, vect, field, false);
             pb.setPaint();
             bullets.add(pb);
