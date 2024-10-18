@@ -118,7 +118,10 @@ public class PlayingFieldView extends View implements Bullet.BulletEventListener
                 if(pb.hit_bullet(bl)) {
                     pb.dead = true;
                     if(bl.shielded) bl.shielded = false;
-                    else bl.hit();
+                    else {
+                        bl.hit();
+                        enemy.getHomeless_bullets().addAll(bl.bullets);
+                    }
                 }
             }
         }

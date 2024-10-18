@@ -31,6 +31,9 @@ public class BulletMultishot extends Bullet {
 
     @Override
     public void draw(Canvas c) {
+        if(shielded) {
+            c.drawCircle(bX+W/2f, bY+H/2f, W, paint);
+        }
         if(hit_cooldown == -1) {
             c.drawBitmap(sprite, null, new Rect((int) bX, (int) bY, (int) (bX+W), (int) (bY+H)), paint);
         } else {

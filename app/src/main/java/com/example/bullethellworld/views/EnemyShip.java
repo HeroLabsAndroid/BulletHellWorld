@@ -37,6 +37,7 @@ public class EnemyShip implements DrawableEntity, Collidable {
     private Bullet.BulletEventListener bel;
 
     private ArrayList<Bullet> bullets = new ArrayList<>();
+    private ArrayList<PlayerBullet> homeless_bullets = new ArrayList<>();
 
     public int hit_cooldown = 0;
     public int cooldown = 0;
@@ -52,6 +53,8 @@ public class EnemyShip implements DrawableEntity, Collidable {
     public ArrayList<Bullet> getBullets() {
         return bullets;
     }
+    public ArrayList<PlayerBullet> getHomeless_bullets() { return homeless_bullets; }
+
 
     public EnemyShip(float x, float y, float[] vect, Field f, Collidable player, Bullet.BulletEventListener bel, int cooldown, Context con) {
         pX = x;
@@ -111,10 +114,23 @@ public class EnemyShip implements DrawableEntity, Collidable {
 
     public void moveBullets(float scale) {
         for(int i=bullets.size()-1; i>=0; i--) {
-            if(bullets.get(i).getAge()>Const.BLT_MAXAGE) bullets.remove(i);
+            if(bullets.get(i).getAge()>Const.BLT_MAXAGE) {
+                bullets.remove(i);
+                homeless_bullets.addAll(bullets.get(i).bullets);
+            }
         }
         for(Bullet b: bullets) {
             b.move(scale);
+        }
+
+        for(int i=homeless_bullets.size()-1; i>=0; i--) {
+            if(homeless_bullets.get(i).dead) bullets.remove(i);
+        }
+        for(PlayerBullet pb: homeless_bullets) {
+            pb.move();
+            if(!pb.dead && player.collides(pb.pos[0], pb.pos[1], 1, 1)) {
+                bel.onBulletHit("NME_HIT", new UUID(-1,-1));
+            }
         }
     }
 
@@ -143,6 +159,7 @@ public class EnemyShip implements DrawableEntity, Collidable {
         if(player.collides(pX+vect[0]*scale, pY+vect[1]*scale, W, H)) {
             bel.onBulletHit("NME_HIT", new UUID(-1,-1));
         }
+
         Side colside = field.collides(pX+vect[0]*scale, pY+vect[1]*scale, W, H);
         if(colside != Side.NONE)
         {
@@ -181,6 +198,9 @@ public class EnemyShip implements DrawableEntity, Collidable {
             c.drawBitmap(sprite_hit, null, new Rect((int) pX, (int) pY, (int) (pX + W), (int) (pY + W)), paint);
         }
         for(Bullet pb: bullets) {
+            pb.draw(c);
+        }
+        for(PlayerBullet pb: homeless_bullets) {
             pb.draw(c);
         }
     }
