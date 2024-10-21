@@ -167,6 +167,8 @@ public class Bullet implements DrawableEntity {
         lightpaint = new Paint();
         Paint p = new Paint();
         p.setColor(Color.argb(255, (int)CLR_BLT_NEW[0], (int)CLR_BLT_NEW[1], (int)CLR_BLT_NEW[2]));
+        p.setStyle(Paint.Style.STROKE);
+        p.setStrokeWidth(3);
         Color clr = Color.valueOf(p.getColor());
         lightpaint.setColor(0xFF161B29);
         return p;

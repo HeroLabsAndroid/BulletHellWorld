@@ -115,8 +115,8 @@ public class EnemyShip implements DrawableEntity, Collidable {
     public void moveBullets(float scale) {
         for(int i=bullets.size()-1; i>=0; i--) {
             if(bullets.get(i).getAge()>Const.BLT_MAXAGE) {
-                bullets.remove(i);
                 homeless_bullets.addAll(bullets.get(i).bullets);
+                bullets.remove(i);
             }
         }
         for(Bullet b: bullets) {
@@ -124,7 +124,7 @@ public class EnemyShip implements DrawableEntity, Collidable {
         }
 
         for(int i=homeless_bullets.size()-1; i>=0; i--) {
-            if(homeless_bullets.get(i).dead) bullets.remove(i);
+            if(homeless_bullets.get(i).dead) homeless_bullets.remove(i);
         }
         for(PlayerBullet pb: homeless_bullets) {
             pb.move();
